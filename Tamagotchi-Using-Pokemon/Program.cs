@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using Tamagotchi_Using_Pokemon.Models;
+using Tamagotchi_Using_Pokemon.Services;
 
 namespace Tamagotchi_Using_Pokemon
 {
@@ -16,34 +17,29 @@ namespace Tamagotchi_Using_Pokemon
             _pokeModel = new PokemonModel();
         }
 
-        public class Response
-        {
-            public int count { get; set; }
-            public string next { get; set; }
-            public string previous { get; set; }
-            public List<PokemonModel> results { get; set; }
-        }
-
         static void Main(string[] args)
         {
-            var URI = $@"https://pokeapi.co/api/v2/pokemon/";
-            var client = new RestClient(URI);
-            var request = new RestRequest(URI, Method.Get);
-            RestResponse response = client.Execute(request);
-            Deserializar(response.Content);
-        }
+            string pokemonName = "squirtle";
+            var pokemonAttributes = PokemonService.FindBySpecies(pokemonName);
 
-        public static void Deserializar(string response)
-        {
+            Console.WriteLine("Nome pokemon: " + pokemonName);
+            Console.WriteLine("Altura: " + pokemonAttributes.height);
+            Console.WriteLine("Peso: " + pokemonAttributes.weight + "\n");
 
-            var listPokemons = JsonConvert.DeserializeObject<Response>(response);
-
-            foreach(PokemonModel pokemon in listPokemons.results)
+            foreach(AbilitiesModel abilities in pokemonAttributes.abilities)
             {
-                Console.WriteLine("Nome: " + pokemon.name + "\n");
-                Console.WriteLine("URI: " + pokemon.url);
-                Console.WriteLine("------------------------------");
+                Console.WriteLine("Habilidades: " + abilities.ability.name);
             }
+
+            Console.WriteLine("----------------------------------------------");
         }
+
+        //foreach (PokemonModel pokemon in listPokemons.results)
+        //{
+        //    Console.WriteLine("Nome: " + pokemon.name + "\n");
+        //    Console.WriteLine("URI: " + pokemon.url);
+        //    Console.WriteLine("------------------------------");
+        //}
+
     }
 }
